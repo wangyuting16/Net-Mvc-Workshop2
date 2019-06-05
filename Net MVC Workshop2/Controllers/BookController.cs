@@ -12,9 +12,7 @@ namespace Net_MVC_Workshop2.Controllers
         [HttpGet()]
         public ActionResult Index()
         {
-            //Models.BookServices bookService = new Models.BookServices();
-            //ViewBag.SearchResult = bookService.GetBookByCondtioin();
-            //var result = bookService.GetBookByCondtioin();
+
             return View();
             //return this.Json(ViewBag.SearchResult ,JsonRequestBehavior.AllowGet);
             //return Json(result, JsonRequestBehavior.AllowGet);
@@ -31,13 +29,24 @@ namespace Net_MVC_Workshop2.Controllers
             //return Json(result, JsonRequestBehavior.AllowGet);
         }
         [HttpPost()]
-        public JsonResult Serach(Models.BookSearchArg book)
+        public JsonResult BookClass(Models.BookClass bookclass)
         {
             Models.BookServices bookService = new Models.BookServices();
-            ViewBag.SearchResult = bookService.GetBookByCondtioin(book);
-            var result = bookService.GetBookByCondtioin(book);
-            //return View();
-            //return this.Json(ViewBag.SearchResult ,JsonRequestBehavior.AllowGet);
+            var result = bookService.GetBookClass(bookclass);
+            return Json(result);
+        }
+        [HttpPost()]
+        public JsonResult BookKeeper(Models.BookKeeper bookkeeper)
+        {
+            Models.BookServices bookService = new Models.BookServices();
+            var result = bookService.GetBookKeeper(bookkeeper);
+            return Json(result);
+        }
+        [HttpPost()]
+        public JsonResult BookStatus(Models.BookStatus bookstatus)
+        {
+            Models.BookServices bookService = new Models.BookServices();
+            var result = bookService.GetBookStatus(bookstatus);
             return Json(result);
         }
     }

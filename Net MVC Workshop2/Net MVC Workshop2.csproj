@@ -98,6 +98,8 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\kendo.culture.zh-TW.min.js" />
+    <Content Include="Scripts\kendo.messages.zh-TW.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -110,8 +112,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\BookKeeper.cs" />
+    <Compile Include="Models\BookStatus.cs" />
     <Compile Include="Models\BookSearchArg.cs" />
     <Compile Include="Models\BookServices.cs" />
+    <Compile Include="Models\BookClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
