@@ -1,0 +1,226 @@
+﻿@model Net_MVC_Workshop2.Models.BookSearchArg
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div>
+    <input id="book_amount" type="text" name="book_amount" class="k-textbox" />
+    <button type="button" class="k-button k-primary btn-add-book" id="save_book" name="save_book">測試</button>
+</div>
+<br />
+<select id="size" style="width: 100%;">
+    <option>S - 6 3/4"</option>
+    <option>M - 7 1/4"</option>
+    <option>L - 7 1/8"</option>
+    <option>XL - 7 5/8"</option>
+</select>
+<br />
+
+
+@using (Html.BeginForm("Index", "Book", FormMethod.Post))
+{
+
+
+    <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_NAME, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_NAME, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_CLASS_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_KEEPER, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_KEEPER, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_STATUS, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_STATUS, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="查詢" class="btn btn-success" id="search" />
+                <input type="reset" value="清除" class="btn btn-info" />
+                <input type="button" value="新增書籍" class="btn btn-primary" onclick="javascript:window.location='@Url.Action("InsertBook", "Book")'" />
+            </div>
+        </div>
+    </div>
+    <div id="grid"></div>
+    @*<div class="form-horizontal">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_CLASS_ID)</th>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_NAME)</th>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_STATUS)</th>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_KEEPER)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in (List<Net_MVC_Workshop2.Models.Book>)ViewBag.SearchResult)
+                    {
+
+                        <tr>
+                            <td>@item.BOOK_CLASS_ID</td>
+                            <td>@item.BOOK_NAME</td>
+                            <td>@item.BOOK_STATUS</td>
+                            <td>@item.BOOK_KEEPER</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>*@
+
+}
+
+
+
+
+@*@using (Html.BeginForm("Index", "Book", FormMethod.Post, new { id = "Form1" }))
+    {
+        <div class="form-horizontal">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_CLASS_ID)</th>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_NAME)</th>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_STATUS)</th>
+                        <th>@Html.DisplayNameFor(model => model.BOOK_KEEPER)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in (List<Net_MVC_Workshop2.Models.Book>)ViewBag.SearchResult)
+                    {
+
+                        <tr>
+                            <td>@item.BOOK_CLASS_ID</td>
+                            <td>@item.BOOK_NAME</td>
+                            <td>@item.BOOK_STATUS</td>
+                            <td>@item.BOOK_KEEPER</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+    }*@
+
+<script>
+    $(document).ready(function () {
+        $("#size").kendoDropDownList();
+        $.ajax({
+            type: "post",
+            url: "/book/index",
+            datatype: "json",
+            success: function (response) {
+                alert("1");
+                $("#grid").kendogrid({
+                    datasource: response,
+                    pageable: true,
+                    columns: [
+                        { field: "book_class_id", title: "圖書類別" },
+                        { field: "book_name", title: "書名" },
+                        { field: "book_bought_date", title: "購書日期" },
+                        { field: "book_status", title: "借閱狀態" },
+                        { field: "book_keeper", title: "借閱人" }
+                    ]
+                });
+
+            }, error: function (error) {
+                alert("系統發生錯誤");
+            }
+        });
+        $("#search").click(function () {
+
+            $.ajax({
+                type: "Post",
+                url: "/Book/Index",
+                dataType: "json",
+                success: function (response) {
+                    alert("2");
+                    $("#grid").kendoGrid({
+                        dataSource: response,
+                        pageable: true,
+                        columns: [
+                            { field: "BOOK_CLASS_ID", title: "圖書類別" },
+                            { field: "BOOK_NAME", title: "書名" },
+                            { field: "BOOK_BOUGHT_DATE", title: "購書日期" },
+                            { field: "BOOK_STATUS", title: "借閱狀態" },
+                            { field: "BOOK_KEEPER", title: "借閱人" }
+                        ]
+                    });
+
+                }, error: function (error) {
+                    alert("系統發生錯誤");
+
+                }
+            });
+
+        })
+        //var dataSource = new kendo.data.DataSource({
+        //    transport: {
+        //        read: {
+        //            url: "/Book/Serach",
+        //            dataType: "json"
+        //        }
+        //    },
+        //    pageSize: 10
+        //});
+        //$("#grid").kendoGrid({
+        //    dataSource: dataSource,
+        //    pageable: true,
+        //    columns: [
+        //        { field: "BOOK_CLASS_ID", title: "圖書類別" },
+        //        { field: "BOOK_NAME", title: "書名" },
+        //        { field: "BOOK_BOUGHT_DATE", title: "購書日期" },
+        //        { field: "BOOK_STATUS", title: "借閱狀態" },
+        //        { field: "BOOK_KEEPER", title: "借閱人" }
+        //    ]
+        //});
+
+
+    });
+
+    //AJAX
+
+    //function search() {
+    //    $.ajax({
+    //        type: "Post",
+    //        url: "/Book/Index",
+    //        dataType: "json",
+    //        success: function (response) {
+    //            alert("刪除");
+
+    //            $("#grid").kendoGrid({
+    //                dataSource: response,
+    //                pageable: true,
+    //                columns: [
+    //                    { field: "BOOK_CLASS_ID", title: "圖書類別" },
+    //                    { field: "BOOK_NAME", title: "書名" },
+    //                    { field: "BOOK_BOUGHT_DATE", title: "購書日期" },
+    //                    { field: "BOOK_STATUS", title: "借閱狀態" },
+    //                    { field: "BOOK_KEEPER", title: "借閱人" }
+    //                ]
+    //            });
+    //        }, error: function (error) {
+    //            alert("系統發生錯誤");
+    //        }
+    //    });
+    //}
+
+</script>
