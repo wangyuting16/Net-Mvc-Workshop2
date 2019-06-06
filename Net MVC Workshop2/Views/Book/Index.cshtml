@@ -1,5 +1,10 @@
 ﻿@model Net_MVC_Workshop2.Models.BookSearchArg
 
+<br />
+<div class="alert alert-success alert-dismissible" id="Message" style="display:none">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong id="Content"></strong>
+</div>
 
 @using (Html.BeginForm("Index", "Book", FormMethod.Post, new { id = "BookForm" }))
 {
@@ -14,7 +19,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_CLASS_ID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClass", style = "width: 30%;" })
+                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClassSearch", style = "width: 30%;" })
             </div>
         </div>
         <div class="form-group">
@@ -33,33 +38,86 @@
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="查詢" class="btn btn-success" id="Search" />
                 <input type="reset" value="清除" class="btn btn-info" />
-                <input type="button" value="新增書籍" class="btn btn-primary" id="Insert" />
+                <input type="button" value="新增" class="btn btn-primary" id="Insert" />
             </div>
         </div>
     </div>
-    <div id="grid"></div>
-    <div id="window" style="display:none">dd</div>
+    <div id="Grid"></div>
+
+}
+@using (Html.BeginForm("Insert", "Book", FormMethod.Post, new { id = "WindowForm", style = "display:none" }))
+
+{
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_NAME, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_NAME, new { @class = "form-control", name = "BOOK_NAME", required = "為必填" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_AUTHOR, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_AUTHOR, new { @class = "form-control", name = "BOOK_AUTHOR", required = "為必填" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_PUBLISHER, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_PUBLISHER, new { @class = "form-control", name = "BOOK_PUBLISHER", required = "為必填" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_NOTE, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextArea("BOOK_NOTE", new { @class = "form-control", name = "BOOK_NOTE", required = "為必填" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_BOUGHT_DATE, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_BOUGHT_DATE, new { @class = "form-control", id = "BookBoughtDate", style = "width: 50%;", name = "BOOK_BOUGHT_DATE", required = "為必填" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.BOOK_CLASS_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClassInsert", style = "width: 50%;", name = "BOOK_CLASS_ID", required = "為必填" })
+            </div>
+        </div>
+
+        @Html.TextBoxFor(model => model.BOOK_STATUS, new { @class = "form-control", style = "display:none", name = "BOOK_STATUS", @Value = "A" })
+        @Html.TextBoxFor(model => model.BOOK_KEEPER, new { @class = "form-control", style = "display:none", name = "BOOK_KEEPER", @Value = " " })
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="新增書籍" class="btn btn-success" id="InsertBook" />
+            </div>
+        </div>
+
+    </div>
 }
 
 <script>
     $(document).ready(function () {
         kendo.culture("zh-TW"); //語系設地
-        kendodropdownList(); //呼叫初始化kendodropdownList function
-        kendogrid(); //呼叫初始化kendogrid function
-        booksearch(); //書籍查詢
-        kendowindow(); //初始化window式窗
-
+        KendodropdownList(); //呼叫初始化kendodropdownList function
+        Kendogrid(); //呼叫初始化kendogrid function
+        Booksearch(); //書籍查詢
+        Kendowindow(); //kendowindow+kendoDatePicker購書日期欄位初始化
+        Bookinsert();
     });
     //Ajax抓取資料並初始化kendodropdownList
-    function kendodropdownList() {
+    function KendodropdownList() {
         //圖書類別下拉式
         $.ajax({
             type: "post",
-            url: "/book/BookClass",
+            url: "/Book/BookClass",
             datatype: "json",
             success: function (response) {
                 console.log(response);
-                $("#BookClass").kendoDropDownList({
+                $("#BookClassSearch,#BookClassInsert").kendoDropDownList({
                     dataTextField: "BOOK_CLASS_NAME",
                     dataValueField: "BOOK_CLASS_ID",
                     dataSource: response,
@@ -73,7 +131,7 @@
         //借閱人下拉式
         $.ajax({
             type: "post",
-            url: "/book/BookKeeper",
+            url: "/Book/BookKeeper",
             datatype: "json",
             success: function (response) {
                 console.log(response);
@@ -91,7 +149,7 @@
         //借閱狀態下拉式
         $.ajax({
             type: "post",
-            url: "/book/BookStatus",
+            url: "/Book/BookStatus",
             datatype: "json",
             success: function (response) {
                 console.log(response);
@@ -106,20 +164,21 @@
                 alert("系統發生錯誤");
             }
         });
+
     }
     //Ajax抓取資料並初始化kendogrid
-    function kendogrid() {
+    function Kendogrid() {
         $.ajax({
             type: "post",
-            url: "/book/Index",
+            url: "/Book/Index",
             datatype: "json",
             success: function (response) {
-                $("#grid").kendoGrid({
+                $("#Grid").kendoGrid({
                     dataSource: response,
                     pageable: { //分頁設定
                         input: true,
                         numeric: false,
-                        pageSize: 10
+                        pageSize: 5
                     },
                     columns: [
                         { field: "BOOK_CLASS_ID", title: "圖書類別" },
@@ -135,7 +194,7 @@
         });
     }
     //書籍查詢
-    function booksearch() {
+    function Booksearch() {
         $("#Search").click(function () {
             $.ajax({
                 type: "Post",
@@ -144,7 +203,7 @@
                 dataType: "json",
                 success: function (response) {
                     //更新Kendo Grid Datasource資料
-                    var grid = $('#grid').data("kendoGrid");
+                    var grid = $('#Grid').data("kendoGrid");
                     grid.setDataSource(response);
                 }, error: function (error) {
                     alert("系統發生錯誤");
@@ -153,15 +212,70 @@
             return false;
         })
     }
-    function kendowindow() {
+    //kendowindow+kendoDatePicker購書日期欄位初始化
+    function Kendowindow() {
+        $("#BookBoughtDate").kendoDatePicker({ //購書日期初始化
+            animation: false,
+            value: new Date(),
+            dateInput: true,
+            format: "yyyy-MM-dd",
+            parseFormats: ["yyyyMMdd", "yyyy/MM/dd"]
+        });
         $("#Insert").click(function () {
-            $("#window").kendoWindow({
+
+            $("#WindowForm").kendoWindow({
                 width: "700px",
                 draggable: true,
                 title: "新增書籍",
                 actions: ["Minimize", "Maximize", "Pin", "Close"],
                 modal: true
             }).data("kendoWindow").center().open();
+            $("#WindowForm").attr("style", "display:block");
+
         })
+    }
+    function Bookinsert() {
+        var validator = $("#WindowForm").kendoValidator().data("kendoValidator"); //kendoValidator 前端驗證
+        if (validator.validate()) {
+        $("#InsertBook").click(function () {
+            
+            
+                $.ajax({
+                    type: "Post",
+                    url: "/Book/Insert",
+                    data: $("#WindowForm").serialize(),
+                    dataType: "json",
+                    success: function (response) {
+                        alert("成功");
+                        $("#WindowForm").data("kendoWindow").close();
+                        $("#Message").attr("style", "display:block");
+                        $("#Content").text("新增成功");
+                        $.ajax({
+                            type: "Post",
+                            url: "/Book/Index",
+                            data: $("#BookForm").serialize(),
+                            dataType: "json",
+                            success: function (response) {
+                                //更新Kendo Grid Datasource資料
+                                var grid = $('#Grid').data("kendoGrid");
+                                grid.setDataSource(response);
+                            }, error: function (error) {
+                                alert("系統發生錯誤");
+                            }
+                        });
+                        return false;
+                    }, error: function (error) {
+                        //alert("系統發生錯誤");
+                        $("#Content").text("新增失敗");
+                        $("#Message").attr("style", "display:block");
+                        $("#Message").attr("class", "alert alert-danger alert-dismissible");
+                    }
+                });
+                return false;
+           
+
+            })
+        }
+
     }
 </script>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 
@@ -63,11 +64,11 @@ namespace Net_MVC_Workshop2.Models
             return this.MapBookStatusDataToList(dt);
         }
         //查詢
-        public List<Models.Book> GetBookByCondtioin(Models.BookSearchArg Book)
+        public List<Models.BookSearchArg> GetBookByCondtioin(Models.BookSearchArg Book)
         {
 
             DataTable dt = new DataTable();
-            string sql = @"Select  BOOKCLASS.BOOK_CLASS_NAME,BOOK_NAME,BOOK_BOUGHT_DATE,MEMBER.USER_ENAME,CODE.CODE_NAME
+            string sql = @"Select  BOOKCLASS.BOOK_CLASS_NAME,BOOK_NAME,BOOK_BOUGHT_DATE,MEMBER.USER_CNAME,CODE.CODE_NAME
                            From [dbo].[BOOK_DATA] as b
                            LEFT JOIN [dbo].[BOOK_CLASS] AS BOOKCLASS　ON b.BOOK_CLASS_ID=BOOKCLASS.BOOK_CLASS_ID
                            LEFT JOIN [dbo].[MEMBER_M] AS MEMBER　ON b.BOOK_KEEPER=MEMBER.USER_ID
@@ -91,10 +92,52 @@ namespace Net_MVC_Workshop2.Models
             }
             return this.MapBookDataToList(dt);
         }
-        
+
+        //新增
+        public int InsertBook(Models.BookSearchArg Book)
+        {
+            string sql = @" INSERT INTO [dbo].[BOOK_DATA]
+						 (
+							BOOK_NAME,
+							BOOK_AUTHOR,
+							BOOK_PUBLISHER,
+							BOOK_NOTE,
+							BOOK_BOUGHT_DATE,
+							BOOK_CLASS_ID,
+							BOOK_STATUS,
+                            BOOK_KEEPER
+						 )
+						VALUES
+						(
+							 @BOOK_NAME,@BOOK_AUTHOR, @BOOK_PUBLISHER, @BOOK_NOTE, @BOOK_BOUGHT_DATE, @BOOK_CLASS_ID, 
+                             @BOOK_STATUS,@BOOK_KEEPER
+						)";
+            int BookId;
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.Add(new SqlParameter("@BOOK_NAME", Book.BOOK_NAME));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_AUTHOR", Book.BOOK_AUTHOR));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_PUBLISHER", Book.BOOK_PUBLISHER));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_NOTE", Book.BOOK_NOTE));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_BOUGHT_DATE", Book.BOOK_BOUGHT_DATE));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_CLASS_ID", Book.BOOK_CLASS_ID));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_STATUS", Book.BOOK_STATUS));
+                cmd.Parameters.Add(new SqlParameter("@BOOK_KEEPER", Book.BOOK_KEEPER));
+                BookId = Convert.ToInt32(cmd.ExecuteScalar());
+                conn.Close();
+            }
+            return BookId;
+        }
+
+
+
+
+
 
         //Map資料進List   
-        
+
         //圖書類別
         private List<Models.BookClass> MapBookClassDataToList(DataTable BookClass)
         {
@@ -141,18 +184,19 @@ namespace Net_MVC_Workshop2.Models
             return result;
         }
         //查詢
-        private List<Models.Book> MapBookDataToList(DataTable BookData)
+        private List<Models.BookSearchArg> MapBookDataToList(DataTable BookData)
         {
-            List<Models.Book> result = new List<Book>();
+
+            List<Models.BookSearchArg> result = new List<BookSearchArg>();
             foreach (DataRow row in BookData.Rows)
             {
-                result.Add(new Book()
+                result.Add(new BookSearchArg()
                 {
                     BOOK_CLASS_ID = row["BOOK_CLASS_NAME"].ToString(),
                     BOOK_NAME = row["BOOK_NAME"].ToString(),
-                    BOOK_BOUGHT_DATE = row["BOOK_BOUGHT_DATE"].ToString(),
+                    BOOK_BOUGHT_DATE = Convert.ToDateTime(row["BOOK_BOUGHT_DATE"]).ToString("yyyy/MM/dd"),
                     BOOK_STATUS = row["CODE_NAME"].ToString(),
-                    BOOK_KEEPER = row["USER_ENAME"].ToString(),
+                    BOOK_KEEPER = row["USER_CNAME"].ToString(),
 
                 });
             }

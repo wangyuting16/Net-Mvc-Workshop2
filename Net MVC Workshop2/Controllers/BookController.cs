@@ -49,5 +49,19 @@ namespace Net_MVC_Workshop2.Controllers
             var result = bookService.GetBookStatus(bookstatus);
             return Json(result);
         }
+
+
+        [HttpPost()]
+        public JsonResult Insert(Models.BookSearchArg Book)
+        {
+            if (ModelState.IsValid)
+            {
+                Models.BookServices bookService = new Models.BookServices();
+
+                bookService.InsertBook(Book);
+                //TempData["message"] = "存檔成功";
+            }
+            return Json(Book);
+        }
     }
 }
