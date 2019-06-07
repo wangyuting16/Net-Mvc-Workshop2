@@ -97,7 +97,6 @@ namespace Net_MVC_Workshop2.Models
             }
             return this.MapBookDataToList(dt);
         }
-
         //新增
         public int InsertBook(Models.BookSearchArg Book)
         {
@@ -135,13 +134,12 @@ namespace Net_MVC_Workshop2.Models
             }
             return BookId;
         }
-
         //刪除
         public void DeleteBookById(string BookId)
         {
             try
             {
-                string sql = "Delete FROM [dbo].[BOOK_DATA] Where BOOK_ID=@BOOK_ID";
+                string sql = "Delete FROM [dbo].[BOOK_DATA] Where BOOK_ID = @BOOK_ID";
                 using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
                 {
                     conn.Open();
@@ -156,8 +154,38 @@ namespace Net_MVC_Workshop2.Models
                 throw ex;
             }
         }
+        //修改(抓取資料)
+        public List<Models.BookSearchArg> GetBookUpdateByCondtioin(string BookId)
+        {
 
-        
+            DataTable dt = new DataTable();
+            string sql = @"Select  
+                           BOOK_ID,
+                           BOOKCLASS.BOOK_CLASS_ID,
+                           BOOK_NAME,
+                           BOOK_BOUGHT_DATE,
+                           MEMBER.USER_ID,
+                           CODE.CODE_ID,
+                           BOOK_AUTHOR,
+                           BOOK_PUBLISHER,
+                           BOOK_NOTE
+                           From [dbo].[BOOK_DATA] as b
+                           LEFT JOIN [dbo].[BOOK_CLASS] AS BOOKCLASS　ON b.BOOK_CLASS_ID=BOOKCLASS.BOOK_CLASS_ID
+                           LEFT JOIN [dbo].[MEMBER_M] AS MEMBER　ON b.BOOK_KEEPER=MEMBER.USER_ID
+                           LEFT JOIN [dbo].[BOOK_CODE] AS CODE　ON b.BOOK_STATUS=CODE.CODE_ID
+                           Where(b.BOOK_ID = @Book_Id ) ";
+
+            using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.Add(new SqlParameter("@Book_Id", BookId));
+                SqlDataAdapter sqlAdapter = new SqlDataAdapter(cmd);
+                sqlAdapter.Fill(dt);
+                conn.Close();
+            }
+            return this.MapBookDataUpdateToList(dt);
+        }
 
 
         //Map資料進List   
@@ -222,9 +250,33 @@ namespace Net_MVC_Workshop2.Models
                     BOOK_BOUGHT_DATE = Convert.ToDateTime(row["BOOK_BOUGHT_DATE"]).ToString("yyyy/MM/dd"),
                     BOOK_STATUS = row["CODE_NAME"].ToString(),
                     BOOK_KEEPER = row["USER_CNAME"].ToString()
+                   
                 });
             }
      
+            return result;
+        }
+        //修改(抓取資料)
+        private List<Models.BookSearchArg> MapBookDataUpdateToList(DataTable BookData)
+        {
+
+            List<Models.BookSearchArg> result = new List<BookSearchArg>();
+            foreach (DataRow row in BookData.Rows)
+            {
+                result.Add(new BookSearchArg()
+                {
+                    BOOK_ID = row["BOOK_ID"].ToString(),
+                    BOOK_CLASS_ID = row["BOOK_CLASS_ID"].ToString(),
+                    BOOK_NAME = row["BOOK_NAME"].ToString(),
+                    BOOK_BOUGHT_DATE = Convert.ToDateTime(row["BOOK_BOUGHT_DATE"]).ToString("yyyy/MM/dd"),
+                    BOOK_STATUS = row["CODE_ID"].ToString(),
+                    BOOK_KEEPER = row["USER_ID"].ToString(),
+                    BOOK_AUTHOR = row["BOOK_AUTHOR"].ToString(),
+                    BOOK_PUBLISHER = row["BOOK_PUBLISHER"].ToString(),
+                    BOOK_NOTE = row["BOOK_NOTE"].ToString()
+                });
+            }
+
             return result;
         }
     }

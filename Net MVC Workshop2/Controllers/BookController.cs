@@ -79,6 +79,25 @@ namespace Net_MVC_Workshop2.Controllers
             }
         }
 
-        
+        [HttpGet()]
+        public JsonResult Update(string BookId)
+        {
+            try
+            {
+                Models.BookServices bookService = new Models.BookServices();
+                bookService.GetBookUpdateByCondtioin(BookId);
+                var result = bookService.GetBookUpdateByCondtioin(BookId);
+                return Json(result, JsonRequestBehavior.AllowGet);
+                //return this.Json(true,);
+
+            }
+
+            catch (Exception ex)
+            {
+                return this.Json(false);
+            }
+        }
+
+
     }
 }

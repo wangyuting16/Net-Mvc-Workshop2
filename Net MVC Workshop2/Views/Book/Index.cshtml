@@ -211,8 +211,10 @@
                                 {
                                     name: "刪除",
                                     click: BookDelete,
-
-
+                                },
+                                {
+                                    name: "修改",
+                                    click: BookUpdate,
                                 }
                             ]
                         }
@@ -327,7 +329,42 @@
         });
 
     }
-    
+    //修改書籍
+    function BookUpdate(e) {
+        Kendowindow();
+        $("#HideField").attr("style", "display:block");
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");
+        var data = this.dataItem(tr);
+        console.log(data.BOOK_ID);
+        $.ajax({
+            type: "Get",
+            url: "/Book/Update",
+            data: "BookId=" + data.BOOK_ID,
+            dataType: "json",
+            success: function (response) {
+
+                $("#BookName").val(response[0].BOOK_NAME);
+                $("#BookAuthor").val(response[0].BOOK_AUTHOR);
+                $("#BookPublisher").val(response[0].BOOK_PUBLISHER);
+                $("#BookNote").val(response[0].BOOK_NOTE);
+                $("#BookBoughtDate").val(response[0].BOOK_BOUGHT_DATE);
+
+                var BookClass = $("#BookClassInsert").data("kendoDropDownList");
+                BookClass.value(response[0].BOOK_CLASS_ID);
+                var BookStatus = $("#BookStatusUpdate").data("kendoDropDownList");
+                BookStatus.value(response[0].BOOK_STATUS);
+                var BookKeeper = $("#BookKeeperUpdate").data("kendoDropDownList");
+                BookKeeper.value(response[0].BOOK_KEEPER);
+
+
+            }, error: function (error) {
+                alert("系統發生錯誤");
+
+            }
+        });
+        return false;
+    }
  
 
 </script>
