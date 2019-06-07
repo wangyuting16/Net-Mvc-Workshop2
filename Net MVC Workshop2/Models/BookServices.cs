@@ -139,7 +139,7 @@ namespace Net_MVC_Workshop2.Models
         {
             try
             {
-                string sql = "Delete FROM [dbo].[BOOK_DATA] Where BOOK_ID = @BOOK_ID";
+                string sql = @"Delete FROM [dbo].[BOOK_DATA] Where BOOK_ID = @BOOK_ID";
                 using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
                 {
                     conn.Open();
@@ -186,7 +186,43 @@ namespace Net_MVC_Workshop2.Models
             }
             return this.MapBookDataUpdateToList(dt);
         }
-
+        //修改
+        public void UpdateBookById(Models.BookSearchArg Book)
+        {
+            try
+            {
+                string sql = @"Update  [dbo].[BOOK_DATA] 
+                               Set BOOK_CLASS_ID=@BOOK_CLASS_ID ,
+                               BOOK_NAME=@BOOK_NAME,
+                               BOOK_BOUGHT_DATE=@BOOK_BOUGHT_DATE,
+                               BOOK_STATUS=@BOOK_STATUS,
+                               BOOK_KEEPER=@BOOK_KEEPER,
+                               BOOK_AUTHOR=@BOOK_AUTHOR,
+                               BOOK_PUBLISHER=@BOOK_PUBLISHER,
+                               BOOK_NOTE=@BOOK_NOTE
+                               Where BOOK_ID = @BOOK_ID";
+                using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_ID", Book.BOOK_ID));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_CLASS_ID", Book.BOOK_CLASS_ID));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_NAME", Book.BOOK_NAME));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_BOUGHT_DATE", Book.BOOK_BOUGHT_DATE));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_STATUS", Book.BOOK_STATUS));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_KEEPER", Book.BOOK_KEEPER));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_AUTHOR", Book.BOOK_AUTHOR));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_PUBLISHER", Book.BOOK_PUBLISHER));
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_NOTE", Book.BOOK_NOTE));
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
         //Map資料進List   
 

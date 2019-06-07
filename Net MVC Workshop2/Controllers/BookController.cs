@@ -98,6 +98,22 @@ namespace Net_MVC_Workshop2.Controllers
             }
         }
 
+        [HttpPost()]
+        public JsonResult Update(Models.BookSearchArg Book)
+        {
+            try
+            {
+                Models.BookServices bookService = new Models.BookServices();
+                bookService.UpdateBookById(Book);
+                return this.Json(true);
+            }
+
+            catch (Exception ex)
+            {
+                return this.Json(false);
+            }
+        }
+
 
     }
 }

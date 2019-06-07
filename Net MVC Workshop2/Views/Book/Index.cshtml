@@ -49,6 +49,7 @@
 
 {
     <div class="form-horizontal">
+        @Html.TextBoxFor(model => model.BOOK_ID, new { @class = "form-control",  id = "BookId", name = "BookId", required = "為必填" })
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_NAME, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -106,6 +107,7 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="儲存" class="btn btn-success" id="SaveBook" />
+                <input type="button" value="儲存(修改)" class="btn btn-info" id="UpdateBook" style="display:none" />
             </div>
         </div>
 
@@ -119,7 +121,21 @@
         Kendogrid(); //kendogrid初始化
         Booksearch(); //書籍查詢
         Bookinsert(); //新增書籍
+        $("#UpdateBook").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "/Book/Update",
+                data: $("#WindowForm").serialize(),
+                dataType: "json",
+                success: function (response) {
+                    alert("2");
+                }, error: function (error) {
+                    alert("系統發生錯誤");
 
+                }
+            });
+            return false;
+        })
     });
     //欄位初始化
     function Field() {
@@ -262,6 +278,7 @@
         $("#Insert").click(function () {
             Kendowindow();
             $("#HideField").attr("style", "display:none");
+            $("#UpdateBook").attr("style", "display:none");
             $("#BookStatusUpdate").val("A");
             $("#BookKeeperUpdate").val(" ");
         })
@@ -333,17 +350,19 @@
     function BookUpdate(e) {
         Kendowindow();
         $("#HideField").attr("style", "display:block");
+        $("#SaveBook").attr("style", "display:none");
+        $("#UpdateBook").attr("style", "display:block");
         e.preventDefault();
         var tr = $(e.target).closest("tr");
         var data = this.dataItem(tr);
-        console.log(data.BOOK_ID);
+
         $.ajax({
             type: "Get",
             url: "/Book/Update",
             data: "BookId=" + data.BOOK_ID,
             dataType: "json",
             success: function (response) {
-
+                $("#BookId").val(response[0].BOOK_ID);
                 $("#BookName").val(response[0].BOOK_NAME);
                 $("#BookAuthor").val(response[0].BOOK_AUTHOR);
                 $("#BookPublisher").val(response[0].BOOK_PUBLISHER);
@@ -364,6 +383,8 @@
             }
         });
         return false;
+
+        
     }
  
 
