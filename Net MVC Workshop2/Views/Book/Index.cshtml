@@ -52,47 +52,60 @@
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_NAME, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_NAME, new { @class = "form-control", name = "BOOK_NAME", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_NAME, new { @class = "form-control", id = "BookName", name = "BookName", required = "為必填" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_AUTHOR, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_AUTHOR, new { @class = "form-control", name = "BOOK_AUTHOR", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_AUTHOR, new { @class = "form-control", id = "BookAuthor", name = "BookAuthor", required = "為必填" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_PUBLISHER, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_PUBLISHER, new { @class = "form-control", name = "BOOK_PUBLISHER", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_PUBLISHER, new { @class = "form-control", id = "BookPublisher", name = "BookPublisher", required = "為必填" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_NOTE, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextArea("BOOK_NOTE", new { @class = "form-control", name = "BOOK_NOTE", required = "為必填" })
+                @Html.TextArea("BOOK_NOTE", new { @class = "form-control", id = "BookNote", name = "BookNote", required = "為必填" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_BOUGHT_DATE, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_BOUGHT_DATE, new { @class = "form-control", id = "BookBoughtDate", style = "width: 50%;", name = "BOOK_BOUGHT_DATE", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_BOUGHT_DATE, new { @class = "form-control", id = "BookBoughtDate", style = "width: 50%;", name = "BookBoughtDate", required = "為必填" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_CLASS_ID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClassInsert", style = "width: 50%;", name = "BOOK_CLASS_ID", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClassInsert", style = "width: 50%;", name = "BookClassInsert", required = "為必填" })
             </div>
         </div>
 
-        @Html.TextBoxFor(model => model.BOOK_STATUS, new { @class = "form-control", style = "display:none", name = "BOOK_STATUS", @Value = "A" })
-        @Html.TextBoxFor(model => model.BOOK_KEEPER, new { @class = "form-control", style = "display:none", name = "BOOK_KEEPER", @Value = " " })
+        <div id="HideField">
+            <div class="form-group">
+                @Html.LabelFor(model => model.BOOK_STATUS, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.BOOK_STATUS, new { @class = "form-control", style = "width: 50%;", id = "BookStatusUpdate", name = "BookStatusUpdate" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.BOOK_KEEPER, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextBoxFor(model => model.BOOK_KEEPER, new { @class = "form-control", style = "width: 50%;", id = "BookKeeperUpdate", name = "BookKeeperUpdate" })
+                </div>
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="新增書籍" class="btn btn-success" id="InsertBook" />
+                <input type="submit" value="儲存" class="btn btn-success" id="SaveBook" />
             </div>
         </div>
 
@@ -101,15 +114,15 @@
 
 <script>
     $(document).ready(function () {
-        kendo.culture("zh-TW"); //語系設地
-        KendodropdownList(); //呼叫初始化kendodropdownList function
-        Kendogrid(); //呼叫初始化kendogrid function
+        kendo.culture("zh-TW"); //語系設定
+        Field(); //欄位初始化
+        Kendogrid(); //kendogrid初始化
         Booksearch(); //書籍查詢
-        Kendowindow(); //kendowindow+kendoDatePicker購書日期欄位初始化
-        Bookinsert();
+        Bookinsert(); //新增書籍
+
     });
-    //Ajax抓取資料並初始化kendodropdownList
-    function KendodropdownList() {
+    //欄位初始化
+    function Field() {
         //圖書類別下拉式
         $.ajax({
             type: "post",
@@ -135,7 +148,7 @@
             datatype: "json",
             success: function (response) {
                 console.log(response);
-                $("#BookKeeper").kendoDropDownList({
+                $("#BookKeeper,#BookKeeperUpdate").kendoDropDownList({
                     dataTextField: "USER_CNAME",
                     dataValueField: "USER_ID",
                     dataSource: response,
@@ -153,7 +166,7 @@
             datatype: "json",
             success: function (response) {
                 console.log(response);
-                $("#BookStatus").kendoDropDownList({
+                $("#BookStatus,#BookStatusUpdate").kendoDropDownList({
                     dataTextField: "CODE_NAME",
                     dataValueField: "CODE_ID",
                     dataSource: response,
@@ -164,7 +177,14 @@
                 alert("系統發生錯誤");
             }
         });
-
+        //購書日期初始化
+        $("#BookBoughtDate").kendoDatePicker({
+            animation: false,
+            value: new Date(),
+            dateInput: true,
+            format: "yyyy-MM-dd",
+            parseFormats: ["yyyyMMdd", "yyyy/MM/dd"]
+        });
     }
     //Ajax抓取資料並初始化kendogrid
     function Kendogrid() {
@@ -185,13 +205,35 @@
                         { field: "BOOK_NAME", title: "書名" },
                         { field: "BOOK_BOUGHT_DATE", title: "購書日期" },
                         { field: "BOOK_STATUS", title: "借閱狀態" },
-                        { field: "BOOK_KEEPER", title: "借閱人" }
+                        { field: "BOOK_KEEPER", title: "借閱人" },
+                        {
+                            command: [
+                                {
+                                    name: "刪除",
+                                    click: BookDelete,
+
+
+                                }
+                            ]
+                        }
+
                     ]
                 });
             }, error: function (error) {
                 alert("系統發生錯誤");
             }
         });
+    }
+    //kendowindow初始化
+    function Kendowindow() {
+        $("#WindowForm").kendoWindow({
+            width: "700px",
+            draggable: true,
+            title: "新增書籍",
+            actions: ["Minimize", "Maximize", "Pin", "Close"],
+            modal: true
+        }).data("kendoWindow").center().open();
+        $("#WindowForm").attr("style", "display:block");
     }
     //書籍查詢
     function Booksearch() {
@@ -212,41 +254,23 @@
             return false;
         })
     }
-    //kendowindow+kendoDatePicker購書日期欄位初始化
-    function Kendowindow() {
-        $("#BookBoughtDate").kendoDatePicker({ //購書日期初始化
-            animation: false,
-            value: new Date(),
-            dateInput: true,
-            format: "yyyy-MM-dd",
-            parseFormats: ["yyyyMMdd", "yyyy/MM/dd"]
-        });
-        $("#Insert").click(function () {
-
-            $("#WindowForm").kendoWindow({
-                width: "700px",
-                draggable: true,
-                title: "新增書籍",
-                actions: ["Minimize", "Maximize", "Pin", "Close"],
-                modal: true
-            }).data("kendoWindow").center().open();
-            $("#WindowForm").attr("style", "display:block");
-
-        })
-    }
+    //新增書籍
     function Bookinsert() {
         var validator = $("#WindowForm").kendoValidator().data("kendoValidator"); //kendoValidator 前端驗證
-        if (validator.validate()) {
-        $("#InsertBook").click(function () {
-            
-            
+        $("#Insert").click(function () {
+            Kendowindow();
+            $("#HideField").attr("style", "display:none");
+            $("#BookStatusUpdate").val("A");
+            $("#BookKeeperUpdate").val(" ");
+        })
+        $("#SaveBook").click(function () {
+            if (validator.validate()) {
                 $.ajax({
                     type: "Post",
                     url: "/Book/Insert",
                     data: $("#WindowForm").serialize(),
                     dataType: "json",
                     success: function (response) {
-                        alert("成功");
                         $("#WindowForm").data("kendoWindow").close();
                         $("#Message").attr("style", "display:block");
                         $("#Content").text("新增成功");
@@ -272,10 +296,38 @@
                     }
                 });
                 return false;
-           
-
-            })
-        }
+            }
+        })
+    }
+    //刪除書籍
+    function BookDelete(e) {
+        e.preventDefault();
+        var tr = $(e.target).closest("tr");
+        var data = this.dataItem(tr);
+        console.log(data);
+        kendo.confirm("確定刪除「" + data.BOOK_NAME + "」?").then(function () {
+            $.ajax({
+                type: "POST",
+                url: "/Book/Delete",
+                data: "BookId=" + data.BOOK_ID,
+                dataType: "json",
+                success: function (response) {
+                    $("#Message").attr("style", "display:block");
+                    $("#Content").text("刪除成功");
+                    //var grid = $("#Grid").data("kendogrid");
+                    //grid.datasource.remove(data.book_id);
+                }, error: function (error) {
+                    alert("系統發生錯誤");
+                    $("#Content").text("刪除失敗");
+                    $("#Message").attr("style", "display:block");
+                    $("#Message").attr("class", "alert alert-danger alert-dismissible");
+                }
+            });
+            return false;
+        });
 
     }
+    
+ 
+
 </script>

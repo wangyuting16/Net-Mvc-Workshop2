@@ -9,7 +9,7 @@ namespace Net_MVC_Workshop2.Models
 {
     public class Book
     {
-        public int BOOK_ID { get; set; }
+        public string BOOK_ID { get; set; }
 
         [Required()]
         public string BOOK_NAME { get; set; }

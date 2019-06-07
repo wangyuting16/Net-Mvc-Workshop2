@@ -54,14 +54,31 @@ namespace Net_MVC_Workshop2.Controllers
         [HttpPost()]
         public JsonResult Insert(Models.BookSearchArg Book)
         {
-            if (ModelState.IsValid)
-            {
+            
                 Models.BookServices bookService = new Models.BookServices();
 
                 bookService.InsertBook(Book);
                 //TempData["message"] = "存檔成功";
-            }
+           
             return Json(Book);
         }
+
+        [HttpPost()]
+        public JsonResult Delete(string BookId)
+        {
+            try
+            {
+                Models.BookServices bookService = new Models.BookServices();
+                bookService.DeleteBookById(BookId);
+                return this.Json(true);
+            }
+
+            catch (Exception ex)
+            {
+                return this.Json(false);
+            }
+        }
+
+        
     }
 }

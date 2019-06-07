@@ -68,7 +68,12 @@ namespace Net_MVC_Workshop2.Models
         {
 
             DataTable dt = new DataTable();
-            string sql = @"Select  BOOKCLASS.BOOK_CLASS_NAME,BOOK_NAME,BOOK_BOUGHT_DATE,MEMBER.USER_CNAME,CODE.CODE_NAME
+            string sql = @"Select  BOOK_ID,
+                           BOOKCLASS.BOOK_CLASS_NAME,
+                           BOOK_NAME,
+                           BOOK_BOUGHT_DATE,
+                           MEMBER.USER_CNAME,
+                           CODE.CODE_NAME
                            From [dbo].[BOOK_DATA] as b
                            LEFT JOIN [dbo].[BOOK_CLASS] AS BOOKCLASS　ON b.BOOK_CLASS_ID=BOOKCLASS.BOOK_CLASS_ID
                            LEFT JOIN [dbo].[MEMBER_M] AS MEMBER　ON b.BOOK_KEEPER=MEMBER.USER_ID
@@ -131,9 +136,28 @@ namespace Net_MVC_Workshop2.Models
             return BookId;
         }
 
+        //刪除
+        public void DeleteBookById(string BookId)
+        {
+            try
+            {
+                string sql = "Delete FROM [dbo].[BOOK_DATA] Where BOOK_ID=@BOOK_ID";
+                using (SqlConnection conn = new SqlConnection(this.GetDBConnectionString()))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.Add(new SqlParameter("@BOOK_ID", BookId));
+                    cmd.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-
-
+        
 
 
         //Map資料進List   
@@ -147,7 +171,7 @@ namespace Net_MVC_Workshop2.Models
                 result.Add(new BookClass()
                 {
                     BOOK_CLASS_ID = row["BOOK_CLASS_ID"].ToString(),
-                    BOOK_CLASS_NAME = row["BOOK_CLASS_NAME"].ToString(),             
+                    BOOK_CLASS_NAME = row["BOOK_CLASS_NAME"].ToString(),
                 });
             }
 
@@ -192,15 +216,15 @@ namespace Net_MVC_Workshop2.Models
             {
                 result.Add(new BookSearchArg()
                 {
+                    BOOK_ID = row["BOOK_ID"].ToString(),
                     BOOK_CLASS_ID = row["BOOK_CLASS_NAME"].ToString(),
                     BOOK_NAME = row["BOOK_NAME"].ToString(),
                     BOOK_BOUGHT_DATE = Convert.ToDateTime(row["BOOK_BOUGHT_DATE"]).ToString("yyyy/MM/dd"),
                     BOOK_STATUS = row["CODE_NAME"].ToString(),
-                    BOOK_KEEPER = row["USER_CNAME"].ToString(),
-
+                    BOOK_KEEPER = row["USER_CNAME"].ToString()
                 });
             }
-
+     
             return result;
         }
     }

@@ -9,6 +9,7 @@ namespace Net_MVC_Workshop2.Models
 {
     public class BookSearchArg
     {
+        public string BOOK_ID { get; set; }
         /// <summary>
         /// 圖書類別
         /// </summary>
