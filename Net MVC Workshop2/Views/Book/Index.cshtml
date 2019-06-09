@@ -6,6 +6,8 @@
     <strong id="Content"></strong>
 </div>
 
+
+
 @using (Html.BeginForm("Index", "Book", FormMethod.Post, new { id = "BookForm" }))
 {
     <div class="form-horizontal">
@@ -53,38 +55,38 @@
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_NAME, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_NAME, new { @class = "form-control", id = "BookName", name = "BookName", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_NAME, new { @class = "form-control", id = "BookName", name = "BookName", required = "為必填",validationmessage = "這是必填欄位"  })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_AUTHOR, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_AUTHOR, new { @class = "form-control", id = "BookAuthor", name = "BookAuthor", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_AUTHOR, new { @class = "form-control", id = "BookAuthor", name = "BookAuthor", required = "為必填", validationmessage = "這是必填欄位" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_PUBLISHER, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_PUBLISHER, new { @class = "form-control", id = "BookPublisher", name = "BookPublisher", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_PUBLISHER, new { @class = "form-control", id = "BookPublisher", name = "BookPublisher", required = "為必填", validationmessage = "這是必填欄位" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_NOTE, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextArea("BOOK_NOTE", new { @class = "form-control", id = "BookNote", name = "BookNote", required = "為必填" })
+                @Html.TextArea("BOOK_NOTE", new { @class = "form-control", id = "BookNote", name = "BookNote", required = "為必填", validationmessage = "這是必填欄位" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_BOUGHT_DATE, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_BOUGHT_DATE, new { @class = "form-control", id = "BookBoughtDate", style = "width: 50%;", name = "BookBoughtDate", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_BOUGHT_DATE, new { @class = "form-control", id = "BookBoughtDate", style = "width: 50%;", name = "BookBoughtDate", required = "為必填", validationmessage = "這是必填欄位" })
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.BOOK_CLASS_ID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClassInsert", style = "width: 50%;", name = "BookClassInsert", required = "為必填" })
+                @Html.TextBoxFor(model => model.BOOK_CLASS_ID, new { @class = "form-control", id = "BookClassInsert", style = "width: 50%;", name = "BookClassInsert", required = "為必填", validationmessage = "這是必填欄位" })
             </div>
         </div>
 
@@ -92,7 +94,7 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.BOOK_STATUS, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.TextBoxFor(model => model.BOOK_STATUS, new { @class = "form-control", style = "width: 50%;", id = "BookStatusUpdate", name = "BookStatusUpdate", required = "為必填" })
+                    @Html.TextBoxFor(model => model.BOOK_STATUS, new { @class = "form-control", style = "width: 50%;", id = "BookStatusUpdate", name = "BookStatusUpdate", required = "為必填", validationmessage = "這是必填欄位" })
                 </div>
             </div>
 
@@ -121,9 +123,7 @@
         Kendogrid(); //kendogrid初始化
         Booksearch(); //書籍查詢
         Bookinsert(); //新增書籍
-        BookUpdate();//修改書籍
-        
-       
+        Bookupdate();//修改書籍
     });
     //下拉式欄位初始化
     function Field() {
@@ -133,7 +133,6 @@
             url: "/Book/BookClass",
             datatype: "json",
             success: function (response) {
-                console.log(response);
                 $("#BookClassSearch,#BookClassInsert").kendoDropDownList({
                     dataTextField: "BOOK_CLASS_NAME",
                     dataValueField: "BOOK_CLASS_ID",
@@ -151,7 +150,6 @@
             url: "/Book/BookKeeper",
             datatype: "json",
             success: function (response) {
-                console.log(response);
                 $("#BookKeeper,#BookKeeperUpdate").kendoDropDownList({
                     dataTextField: "USER_CNAME",
                     dataValueField: "USER_ID",
@@ -169,7 +167,6 @@
             url: "/Book/BookStatus",
             datatype: "json",
             success: function (response) {
-                console.log(response);
                 $("#BookStatus,#BookStatusUpdate").kendoDropDownList({
                     dataTextField: "CODE_NAME",
                     dataValueField: "CODE_ID",
@@ -181,9 +178,10 @@
                 alert("系統發生錯誤");
             }
         });
+        //購書日期初始化
         $("#BookBoughtDate").kendoDatePicker({
             animation: false,
-            value: new Date(),
+            value: new Date(), //預設今日日期
             dateInput: true,
             format: "yyyy-MM-dd",
             parseFormats: ["yyyyMMdd", "yyyy/MM/dd"]
@@ -236,9 +234,44 @@
             draggable: true,
             title: "新增書籍",
             actions: ["Minimize", "Maximize", "Pin", "Close"],
-            modal: true
+            modal: true,
+            close: KendowindowClose
         }).data("kendoWindow").center().open();
         $("#WindowForm").attr("style", "display:block");
+    }
+    //KendowindowClose事件 (關閉表單重設值)
+    function KendowindowClose(e) {
+        $('#WindowForm')[0].reset();
+        $("#BookBoughtDate").data("kendoDatePicker").value(new Date());
+    }
+    //更新Kendo Grid Datasource資料
+    function DataSourceUpdate() {
+        $.ajax({
+            type: "Post",
+            url: "/Book/Index",
+            data: $("#BookForm").serialize(),
+            dataType: "json",
+            success: function (response) {
+                //更新Kendo Grid Datasource資料
+                var grid = $('#Grid').data("kendoGrid");
+                grid.setDataSource(response);
+            }, error: function (error) {
+                alert("系統發生錯誤");
+            }
+        });
+        return false;
+    }
+    //成功訊息顯示
+    function SuccessMessage() {
+        $("#Message").attr("style", "display:block"); 
+        $("#Message").attr("class", "alert alert-success alert-dismissible");
+        $("#Message").show().delay(2000).fadeOut();
+    }
+    //失敗訊息顯示
+    function ErrorMessage() {
+        $("#Message").attr("style", "display:block");
+        $("#Message").attr("class", "alert alert-danger alert-dismissible");
+        $("#Message").show().delay(2000).fadeOut();
     }
     //書籍查詢
     function Booksearch() {
@@ -261,19 +294,15 @@
     }
     //新增書籍
     function Bookinsert() {
-        //購書日期初始化
-        
         var validator = $("#WindowForm").kendoValidator().data("kendoValidator"); //kendoValidator 前端驗證
         $("#Insert").click(function () {
-            //$('#WindowForm')[0].reset();
-            
             Kendowindow();
             $("#HideField").attr("style", "display:none");
             $("#UpdateBook").attr("style", "display:none");
             $("#SaveBook").attr("style", "display:block");
             $("#BookStatusUpdate").val("A");
             $("#BookKeeperUpdate").val(" ");
-           
+         
         })
         $("#SaveBook").click(function () {
             if (validator.validate()) {
@@ -284,27 +313,13 @@
                     dataType: "json",
                     success: function (response) {
                         $("#WindowForm").data("kendoWindow").close();
-                        $("#Message").attr("style", "display:block");
+                        SuccessMessage();
                         $("#Content").text("新增成功");
-                        $.ajax({
-                            type: "Post",
-                            url: "/Book/Index",
-                            data: $("#BookForm").serialize(),
-                            dataType: "json",
-                            success: function (response) {
-                                //更新Kendo Grid Datasource資料
-                                var grid = $('#Grid').data("kendoGrid");
-                                grid.setDataSource(response);
-                            }, error: function (error) {
-                                alert("系統發生錯誤");
-                            }
-                        });
-                        return false;
+                        DataSourceUpdate();
                     }, error: function (error) {
-                        //alert("系統發生錯誤");
+                        ErrorMessage();
                         $("#Content").text("新增失敗");
-                        $("#Message").attr("style", "display:block");
-                        $("#Message").attr("class", "alert alert-danger alert-dismissible");
+                      
                     }
                 });
                 return false;
@@ -324,15 +339,14 @@
                 data: "BookId=" + data.BOOK_ID,
                 dataType: "json",
                 success: function (response) {
-                    $("#Message").attr("style", "display:block");
+                    $("#Grid").data("kendoGrid").dataSource.remove(data);//移除Grid刪除列
+                    SuccessMessage();
                     $("#Content").text("刪除成功");
-                    //var grid = $("#Grid").data("kendogrid");
-                    //grid.datasource.remove(data.book_id);
                 }, error: function (error) {
-                    alert("系統發生錯誤");
+                    ErrorMessage();
                     $("#Content").text("刪除失敗");
-                    $("#Message").attr("style", "display:block");
-                    $("#Message").attr("class", "alert alert-danger alert-dismissible");
+                    
+                   
                 }
             });
             return false;
@@ -348,8 +362,6 @@
         e.preventDefault();
         var tr = $(e.target).closest("tr");
         var data = this.dataItem(tr);
-
-        
         $.ajax({
             type: "Get",
             url: "/Book/Update",
@@ -366,6 +378,7 @@
                 $("#BookStatusUpdate").data("kendoDropDownList").value(response[0].BOOK_STATUS);
                 $("#BookKeeperUpdate").data("kendoDropDownList").value(response[0].BOOK_KEEPER);
 
+                //根據借閱狀態，設定借閱人唯獨
                 var BookStatus = $("#BookStatusUpdate").val();
                 if (BookStatus == "A" || BookStatus == "U") {
                     $("#BookKeeperUpdate").data("kendoDropDownList").readonly();
@@ -373,33 +386,29 @@
                 else {
                     $("#BookKeeperUpdate").data("kendoDropDownList").readonly(false);
                 }
-                //
+                //根據借閱狀態變動，調整借閱人唯獨，以及驗證
                 $("#BookStatusUpdate").change(function () {
                     var BookStatus = $("#BookStatusUpdate").val();
-                    console.log(BookStatus);
                     if (BookStatus == "A" || BookStatus == "U") {
                         $("#BookKeeperUpdate").data("kendoDropDownList").readonly();
-                    
+                        $("#BookKeeperUpdate").data("kendoDropDownList").value(" ");
+                        $("#BookKeeperUpdate").val(" ");
                     }
                     else {
                         $("#BookKeeperUpdate").data("kendoDropDownList").readonly(false);
-                        //$("#BookKeeperUpdate").attr('required', '為必填');
+                        $("#BookKeeperUpdate").attr("required", "為必填");
+                        $("#BookKeeperUpdate").attr("validationmessage", "這是必填欄位");
                     }
-
                 });
             }, error: function (error) {
                 alert("系統發生錯誤");
 
             }
         });
-        return false;
-        
-        
+        return false; 
     }
     //修改書籍
-    function BookUpdate() {
-        
-       
+    function Bookupdate() {
         $("#UpdateBook").click(function () {
             var validator = $("#WindowForm").kendoValidator().data("kendoValidator"); //kendoValidator 前端驗證
             if (validator.validate()) {
@@ -409,25 +418,13 @@
                 data: $("#WindowForm").serialize(),
                 dataType: "json",
                 success: function (response) {
-                    alert("2");
                     $("#WindowForm").data("kendoWindow").close();
-                    $.ajax({
-                        type: "Post",
-                        url: "/Book/Index",
-                        data: $("#BookForm").serialize(),
-                        dataType: "json",
-                        success: function (response) {
-                            //更新Kendo Grid Datasource資料
-                            var grid = $('#Grid').data("kendoGrid");
-                            grid.setDataSource(response);
-                        }, error: function (error) {
-                            alert("系統發生錯誤");
-                        }
-                    });
-                    return false;
+                    SuccessMessage();
+                    $("#Content").text("修改成功");
+                    DataSourceUpdate();
                 }, error: function (error) {
-                    alert("系統發生錯誤");
-
+                    ErrorMessage();
+                    $("#Content").text("修改失敗");
                 }
             });
             return false;

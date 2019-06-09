@@ -42,7 +42,7 @@ namespace Net_MVC_Workshop2.Models
         /// 借閱人
         /// </summary>
         [DisplayName("借閱人")]
-        [Required()]
+        //[Required()]
         public string BOOK_KEEPER { get; set; }
 
         /// <summary>

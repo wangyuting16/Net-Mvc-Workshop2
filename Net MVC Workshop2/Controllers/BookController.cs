@@ -54,11 +54,13 @@ namespace Net_MVC_Workshop2.Controllers
         [HttpPost()]
         public JsonResult Insert(Models.BookSearchArg Book)
         {
-            
-                Models.BookServices bookService = new Models.BookServices();
 
+            if (ModelState.IsValid) //後端驗證
+            {
+                Models.BookServices bookService = new Models.BookServices();
                 bookService.InsertBook(Book);
-                //TempData["message"] = "存檔成功";
+            }
+            
            
             return Json(Book);
         }
@@ -103,9 +105,14 @@ namespace Net_MVC_Workshop2.Controllers
         {
             try
             {
-                Models.BookServices bookService = new Models.BookServices();
-                bookService.UpdateBookById(Book);
+                if (ModelState.IsValid) //後端驗證
+                {
+                    Models.BookServices bookService = new Models.BookServices();
+                    bookService.UpdateBookById(Book);
+                }
+                    
                 return this.Json(true);
+
             }
 
             catch (Exception ex)
