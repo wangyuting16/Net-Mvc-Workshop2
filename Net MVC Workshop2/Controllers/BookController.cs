@@ -12,7 +12,7 @@ namespace Net_MVC_Workshop2.Controllers
         [HttpGet()]
         public ActionResult Index()
         {
-
+            ViewBag.Title = "圖書館系統";
             return View();
             //return this.Json(ViewBag.SearchResult ,JsonRequestBehavior.AllowGet);
             //return Json(result, JsonRequestBehavior.AllowGet);
